@@ -1,0 +1,14 @@
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
+from .base import BaseModel
+
+class Usuario(BaseModel):
+    __tablename__ = "usuarios"
+    
+    nome = Column(String(100), nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
+    senha = Column(String(100), nullable=False)
+    
+    # Relacionamentos
+    pessoa_fisica = relationship("PessoaFisica", back_populates="usuario", uselist=False)
+    pessoa_juridica = relationship("PessoaJuridica", back_populates="usuario", uselist=False)
