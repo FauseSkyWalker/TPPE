@@ -1,0 +1,168 @@
+@startuml DiagramaFisico
+
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <u>x</u>
+!define foreign_key(x) <i>x</i>
+
+hide methods
+hide stereotypes
+
+table(usuarios) {
+  primary_key(id) INTEGER
+  nome VARCHAR(100)
+  email VARCHAR(100)
+  senha VARCHAR(100)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(pessoas_fisicas) {
+  primary_key(id) INTEGER
+  foreign_key(usuario_id) INTEGER
+  cpf VARCHAR(11)
+  data_nascimento DATE
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(pessoas_juridicas) {
+  primary_key(id) INTEGER
+  foreign_key(usuario_id) INTEGER
+  cnpj VARCHAR(14)
+  razao_social VARCHAR(200)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(passageiros) {
+  primary_key(id) INTEGER
+  nome VARCHAR(100)
+  documento VARCHAR(20)
+  tipo_passageiro VARCHAR(10)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(aeroportos) {
+  primary_key(id) INTEGER
+  codigo VARCHAR(3)
+  nome VARCHAR(100)
+  cidade VARCHAR(100)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(voos) {
+  primary_key(id) INTEGER
+  numero VARCHAR(10)
+  data_partida TIMESTAMP
+  data_chegada TIMESTAMP
+  foreign_key(origem_id) INTEGER
+  foreign_key(destino_id) INTEGER
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(passagens) {
+  primary_key(id) INTEGER
+  numero VARCHAR(20)
+  valor DECIMAL(10,2)
+  data DATE
+  foreign_key(passageiro_id) INTEGER
+  foreign_key(voo_id) INTEGER
+  foreign_key(pagamento_id) INTEGER
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(pagamentos) {
+  primary_key(id) INTEGER
+  valor DECIMAL(10,2)
+  status VARCHAR(20)
+  tipo VARCHAR(10)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(boletos) {
+  primary_key(id) INTEGER
+  foreign_key(pagamento_id) INTEGER
+  codigo_barras VARCHAR(48)
+}
+
+table(cartoes) {
+  primary_key(id) INTEGER
+  foreign_key(pagamento_id) INTEGER
+  numero VARCHAR(16)
+  validade VARCHAR(7)
+  cvv VARCHAR(3)
+}
+
+table(pix) {
+  primary_key(id) INTEGER
+  foreign_key(pagamento_id) INTEGER
+  chave VARCHAR(100)
+}
+
+table(carros) {
+  primary_key(id) INTEGER
+  modelo VARCHAR(100)
+  placa VARCHAR(7)
+  valor_diaria DECIMAL(10,2)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(hoteis) {
+  primary_key(id) INTEGER
+  nome VARCHAR(100)
+  endereco VARCHAR(200)
+  valor_diaria DECIMAL(10,2)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(alugueis_carros) {
+  primary_key(id) INTEGER
+  data_inicio DATE
+  data_fim DATE
+  valor DECIMAL(10,2)
+  foreign_key(carro_id) INTEGER
+  foreign_key(pagamento_id) INTEGER
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+table(alugueis_hoteis) {
+  primary_key(id) INTEGER
+  data_checkin DATE
+  data_checkout DATE
+  valor DECIMAL(10,2)
+  foreign_key(hotel_id) INTEGER
+  foreign_key(pagamento_id) INTEGER
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+' Relacionamentos
+pessoas_fisicas }-- usuarios
+pessoas_juridicas }-- usuarios
+
+passagens }-- passageiros
+passagens }-- voos
+passagens }-- pagamentos
+
+voos }-- aeroportos : origem
+voos }-- aeroportos : destino
+
+boletos }-- pagamentos
+cartoes }-- pagamentos
+pix }-- pagamentos
+
+alugueis_carros }-- carros
+alugueis_carros }-- pagamentos
+
+alugueis_hoteis }-- hoteis
+alugueis_hoteis }-- pagamentos
+
+@enduml
