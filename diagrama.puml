@@ -1,0 +1,127 @@
+@startuml Agencia
+
+' Definição do estilo
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+' Classes principais
+class Usuario {
+    nome: str
+    email: str
+    senha: str
+}
+
+class PessoaFisica {
+    cpf: str
+    data_nascimento: date
+}
+
+class PessoaJuridica {
+    cnpj: str
+    razao_social: str
+}
+
+class Passageiro {
+    nome: str
+    documento: str
+    tipo_passageiro: TipoPassageiro
+}
+
+class Passagem {
+    numero: str
+    valor: float
+    data: date
+}
+
+class Voo {
+    numero: str
+    data_partida: datetime
+    data_chegada: datetime
+}
+
+class Aeroporto {
+    codigo: str
+    nome: str
+    cidade: str
+}
+
+class Pagamento {
+    valor: float
+    status: str
+}
+
+class AluguelCarro {
+    data_inicio: date
+    data_fim: date
+    valor: float
+}
+
+class Carro {
+    modelo: str
+    placa: str
+    valor_diaria: float
+}
+
+class AluguelHotel {
+    data_checkin: date
+    data_checkout: date
+    valor: float
+}
+
+class Hotel {
+    nome: str
+    endereco: str
+    valor_diaria: float
+}
+
+class Boleto {
+    codigo_barras: str
+}
+
+class Cartao {
+    numero: str
+    validade: str
+    cvv: str
+}
+
+class Pix {
+    chave: str
+}
+
+' Enums
+enum TipoPassageiro {
+    ADULTO
+    CRIANCA
+    IDOSO
+}
+
+enum TipoPagamento {
+    BOLETO
+    CARTAO
+    PIX
+}
+
+' Relacionamentos
+Usuario <|-- PessoaFisica
+Usuario <|-- PessoaJuridica
+
+Passageiro "1" -- "many" Passagem
+Passagem "many" -- "1" Voo
+Voo "many" -- "1" Aeroporto : origem
+Voo "many" -- "1" Aeroporto : destino
+
+Pagamento <|-- Boleto
+Pagamento <|-- Cartao
+Pagamento <|-- Pix
+
+Passagem "1" -- "1" Pagamento
+AluguelCarro "1" -- "1" Pagamento
+AluguelHotel "1" -- "1" Pagamento
+
+AluguelCarro "many" -- "1" Carro
+AluguelHotel "many" -- "1" Hotel
+
+@enduml
