@@ -61,8 +61,4 @@ async def startup():
 
 @app.get("/")
 async def root():
-    return {
-        "message": "Bem-vindo à API da Agência de Viagens",
-        "docs": "/docs",
-        "redoc": "/redoc"
-    }
+    return {"message": "API is running"}

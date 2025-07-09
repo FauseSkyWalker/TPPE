@@ -2,7 +2,7 @@ import pytest
 from app.models import Usuario, PessoaFisica, Passageiro
 from app.enums import TipoPassageiro
 from app.services.passageiro_service import calcular_valor_passagem
-from datetime import date
+from datetime import date, timedelta
 
 @pytest.mark.parametrize("nome,email,senha,esperado", [
     ("João Silva", "joao@email.com", "senha123", True),
@@ -22,7 +22,7 @@ def test_validacao_usuario(nome, email, senha, esperado):
     ("12345678900", date(1990, 1, 1), True),
     ("123456789", date(1990, 1, 1), False),  # CPF curto
     ("1234567890a", date(1990, 1, 1), False),  # CPF com letra
-    ("12345678900", date(2025, 1, 1), False),  # Data futura
+    ("12345678900", date.today() + timedelta(days=1), False),  # Data futura
 ])
 def test_validacao_pessoa_fisica(cpf, data_nascimento, esperado):
     try:

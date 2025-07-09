@@ -2,7 +2,7 @@ import pytest
 from datetime import date, datetime, timedelta
 from app.models import (
     Usuario, PessoaFisica, PessoaJuridica,
-    Passageiro, Voo, Aeroporto, Passagem,
+    Passageiro, Voo, Passagem,
     Pagamento, Boleto, Cartao, Pix,
     Carro, Hotel, AluguelCarro, AluguelHotel
 )
@@ -44,26 +44,15 @@ def test_passageiro_model():
     assert passageiro.tipo_passageiro == TipoPassageiro.ADULTO
 
 def test_voo_model():
-    origem = Aeroporto(
-        codigo="GRU",
-        nome="Aeroporto de Guarulhos",
-        cidade="São Paulo"
-    )
-    destino = Aeroporto(
-        codigo="GIG",
-        nome="Aeroporto do Galeão",
-        cidade="Rio de Janeiro"
-    )
+    now = datetime.now()
     voo = Voo(
-        numero="AA123",
-        data_partida=datetime.now(),
-        data_chegada=datetime.now() + timedelta(hours=2),
-        origem=origem,
-        destino=destino
+        nome="AA123",
+        data_partida=now,
+        data_chegada=now + timedelta(hours=2)
     )
-    assert voo.numero == "AA123"
-    assert voo.origem == origem
-    assert voo.destino == destino
+    assert voo.nome == "AA123"
+    assert voo.data_partida == now
+    assert voo.data_chegada == now + timedelta(hours=2)
 
 def test_pagamento_boleto_model():
     boleto = Boleto(

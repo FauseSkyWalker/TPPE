@@ -2,7 +2,7 @@ import pytest
 from datetime import date, datetime, timedelta
 from app.models import (
     Usuario, PessoaFisica, PessoaJuridica,
-    Passageiro, Voo, Aeroporto, Passagem,
+    Passageiro, Voo, Passagem,
     Pagamento, Boleto, Cartao, Pix,
     Carro, Hotel, AluguelCarro, AluguelHotel
 )
@@ -34,29 +34,15 @@ def test_criar_pessoa_fisica():
     assert pessoa.usuario == usuario
 
 def test_criar_voo():
-    origem = Aeroporto(
-        codigo="GRU",
-        nome="Guarulhos",
-        cidade="São Paulo"
-    )
-    destino = Aeroporto(
-        codigo="CGH",
-        nome="Congonhas",
-        cidade="São Paulo"
-    )
     data_partida = datetime.now() + timedelta(days=1)
     data_chegada = data_partida + timedelta(hours=2)
     
     voo = Voo(
-        numero="AA123",
+        nome="AA123",
         data_partida=data_partida,
-        data_chegada=data_chegada,
-        origem=origem,
-        destino=destino
+        data_chegada=data_chegada
     )
-    assert voo.numero == "AA123"
-    assert voo.origem == origem
-    assert voo.destino == destino
+    assert voo.nome == "AA123"
     assert voo.data_chegada > voo.data_partida
 
 def test_criar_passagem():
@@ -66,7 +52,7 @@ def test_criar_passagem():
         tipo_passageiro=TipoPassageiro.ADULTO
     )
     voo = Voo(
-        numero="AA123",
+        nome="AA123",
         data_partida=datetime.now(),
         data_chegada=datetime.now() + timedelta(hours=2)
     )
@@ -136,5 +122,5 @@ def test_validacoes():
         PessoaFisica(
             usuario=Usuario(nome="Test", email="test@test.com", senha="123"),
             cpf="12345678900",
-            data_nascimento=date(2025, 1, 1)
+            data_nascimento=date.today() + timedelta(days=1)
         )
