@@ -4,7 +4,6 @@ from sqlalchemy import select
 from .base import BaseRepository
 from ..models import Passageiro, Voo, Passagem
 
-
 class PassageiroRepository(BaseRepository[Passageiro]):
     def __init__(self, session: AsyncSession):
         super().__init__(Passageiro, session)
@@ -14,7 +13,6 @@ class PassageiroRepository(BaseRepository[Passageiro]):
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-
 class VooRepository(BaseRepository[Voo]):
     def __init__(self, session: AsyncSession):
         super().__init__(Voo, session)
@@ -23,6 +21,7 @@ class VooRepository(BaseRepository[Voo]):
         query = select(self.model).where(self.model.nome == nome)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
+
 
 
 class PassagemRepository(BaseRepository[Passagem]):

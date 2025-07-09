@@ -15,7 +15,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -26,9 +25,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-
 async def get_current_user(
-    token: str = Depends(oauth2_scheme), session: AsyncSession = Depends(get_db)
+    token: str = Depends(oauth2_scheme),
+    session: AsyncSession = Depends(get_db)
 ) -> Usuario:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -42,13 +41,14 @@ async def get_current_user(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-
+    
     service = UsuarioService(session)
     user = await service.get_usuario_by_email(email=email)
     if user is None:
         raise credentials_exception
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Inactive user"
         )
     return user

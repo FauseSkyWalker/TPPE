@@ -8,20 +8,21 @@ from .pagamento import Pagamento, Boleto, Cartao, Pix
 from .aluguel import Carro, Hotel, AluguelCarro, AluguelHotel
 
 __all__ = [
-    "Base",
-    "BaseModel",
-    "Usuario",
-    "PessoaFisica",
-    "PessoaJuridica",
-    "Passageiro",
-    "Voo",
-    "Passagem",
-    "Pagamento",
-    "Boleto",
-    "Cartao",
-    "Pix",
-    "Carro",
-    "Hotel",
-    "AluguelCarro",
-    "AluguelHotel",
+    'Base',
+    'BaseModel',
+    'Usuario',
+    'PessoaFisica',
+    'PessoaJuridica',
+    'Passageiro',
+    'Voo',
+
+    'Passagem',
+    'Pagamento',
+    'Boleto',
+    'Cartao',
+    'Pix',
+    'Carro',
+    'Hotel',
+    'AluguelCarro',
+    'AluguelHotel'
 ]

@@ -4,7 +4,6 @@ from sqlalchemy import select
 from .base import BaseRepository
 from ..models import Usuario, PessoaFisica, PessoaJuridica
 
-
 class UsuarioRepository(BaseRepository[Usuario]):
     def __init__(self, session: AsyncSession):
         super().__init__(Usuario, session)
@@ -14,7 +13,6 @@ class UsuarioRepository(BaseRepository[Usuario]):
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-
 class PessoaFisicaRepository(BaseRepository[PessoaFisica]):
     def __init__(self, session: AsyncSession):
         super().__init__(PessoaFisica, session)
@@ -23,7 +21,6 @@ class PessoaFisicaRepository(BaseRepository[PessoaFisica]):
         query = select(self.model).where(self.model.cpf == cpf)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
-
 
 class PessoaJuridicaRepository(BaseRepository[PessoaJuridica]):
     def __init__(self, session: AsyncSession):

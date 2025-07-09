@@ -2,18 +2,16 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from .controllers import (
-    usuario_router,
-    auth_router,
-    aluguel_router,
-    pagamento_router,
-    viagem_router,
+    usuario_router, auth_router,
+    aluguel_router, pagamento_router, viagem_router
 )
 from .database import create_tables
 import logging
 
 # Configurar logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
 app = FastAPI(
@@ -22,7 +20,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/openapi.json",
+    openapi_url="/openapi.json"
 )
 
 # Configurar CORS
@@ -41,7 +39,6 @@ app.include_router(aluguel_router)
 app.include_router(pagamento_router)
 app.include_router(viagem_router)
 
-
 # Tratamento de exceções
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -50,7 +47,6 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "Internal server error"},
     )
 
-
 # Log de requisições
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -58,12 +54,10 @@ async def log_requests(request: Request, call_next):
     response = await call_next(request)
     return response
 
-
 @app.on_event("startup")
 async def startup():
     """Criar tabelas no banco de dados durante a inicialização."""
     await create_tables()
-
 
 @app.get("/")
 async def root():
