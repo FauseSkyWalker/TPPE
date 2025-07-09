@@ -40,7 +40,7 @@ const Aluguel = () => {
     onSubmit: async (values) => {
       try {
         const token = localStorage.getItem('token');
-        await axios.post('http://localhost:8000/api/aluguel/carros', values, {
+        await axios.post('http://localhost:8000/api/alugueis/carros', values, {
           headers: { Authorization: `Bearer ${token}` },
         });
         handleClose();
@@ -54,7 +54,7 @@ const Aluguel = () => {
   const fetchCarros = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8000/api/aluguel/carros', {
+      const response = await axios.get('http://localhost:8000/api/alugueis/carros', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCarros(response.data);
@@ -106,7 +106,7 @@ const Aluguel = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:8000/api/aluguel/alugueis',
+        'http://localhost:8000/api/alugueis/alugueis/carros',
         {
           carro_id: carroSelecionado.id,
           data_inicio: dataInicio,
