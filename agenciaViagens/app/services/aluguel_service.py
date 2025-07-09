@@ -1,7 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..models.aluguel import Carro, Hotel, AluguelCarro, AluguelHotel
 from ..repositories.base_repository import BaseRepository
-from ..schemas.aluguel import CarroCreate, HotelCreate, AluguelCarroCreate, AluguelHotelCreate
+from ..schemas.aluguel import (
+    CarroCreate,
+    HotelCreate,
+    AluguelCarroCreate,
+    AluguelHotelCreate,
+)
+
 
 class AluguelService:
     def __init__(self, db: AsyncSession):

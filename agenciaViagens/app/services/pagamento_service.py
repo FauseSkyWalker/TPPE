@@ -3,6 +3,7 @@ from ..models.pagamento import Pagamento, Boleto, Cartao, Pix
 from ..repositories.base_repository import BaseRepository
 from ..schemas.pagamento import BoletoCreate, CartaoCreate, PixCreate
 
+
 class PagamentoService:
     def __init__(self, db: AsyncSession):
         self.db = db

@@ -2,6 +2,7 @@ from datetime import date, datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
+
 # Base compartilhado
 class UsuarioBase(BaseModel):
     nome: str
@@ -9,9 +10,11 @@ class UsuarioBase(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 # Criação
 class UsuarioCreate(UsuarioBase):
     senha: str = Field(..., min_length=6)
+
 
 # Atualização parcial
 class UsuarioUpdate(BaseModel):
@@ -21,6 +24,7 @@ class UsuarioUpdate(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 # Retorno completo
 class Usuario(BaseModel):
     id: int
@@ -28,27 +32,30 @@ class Usuario(BaseModel):
     email: EmailStr
 
     model_config = ConfigDict(
-        from_attributes=True,
-        exclude={'created_at', 'updated_at'}
+        from_attributes=True, exclude={"created_at", "updated_at"}
     )
+
 
 # ------------------ Pessoa Física ------------------ #
 class PessoaFisicaBase(BaseModel):
-    cpf: str = Field(..., pattern=r'^\d{11}$')
+    cpf: str = Field(..., pattern=r"^\d{11}$")
     data_nascimento: date
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class PessoaFisicaCreate(PessoaFisicaBase):
     usuario: UsuarioCreate
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class PessoaFisicaUpdate(BaseModel):
-    cpf: Optional[str] = Field(None, pattern=r'^\d{11}$')
+    cpf: Optional[str] = Field(None, pattern=r"^\d{11}$")
     data_nascimento: Optional[date] = None
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class PessoaFisica(BaseModel):
     id: int
@@ -59,23 +66,27 @@ class PessoaFisica(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 # ------------------ Pessoa Jurídica ------------------ #
 class PessoaJuridicaBase(BaseModel):
-    cnpj: str = Field(..., pattern=r'^\d{14}$')
+    cnpj: str = Field(..., pattern=r"^\d{14}$")
     razao_social: str
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class PessoaJuridicaCreate(PessoaJuridicaBase):
     usuario: UsuarioCreate
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class PessoaJuridicaUpdate(BaseModel):
-    cnpj: Optional[str] = Field(None, pattern=r'^\d{14}$')
+    cnpj: Optional[str] = Field(None, pattern=r"^\d{14}$")
     razao_social: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class PessoaJuridica(BaseModel):
     id: int

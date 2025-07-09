@@ -7,9 +7,12 @@ from passlib.context import CryptContext
 from app.models.usuario import Usuario
 from app.models.pessoa import PessoaFisica, PessoaJuridica
 from app.schemas.usuario import (
-    UsuarioCreate, UsuarioUpdate,
-    PessoaFisicaCreate, PessoaFisicaUpdate,
-    PessoaJuridicaCreate, PessoaJuridicaUpdate
+    UsuarioCreate,
+    UsuarioUpdate,
+    PessoaFisicaCreate,
+    PessoaFisicaUpdate,
+    PessoaJuridicaCreate,
+    PessoaJuridicaUpdate,
 )
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -25,13 +28,15 @@ class UsuarioService:
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         return pwd_context.verify(plain_password, hashed_password)
 
-    async def create_pessoa_fisica(self, pessoa_data: PessoaFisicaCreate) -> PessoaFisica:
+    async def create_pessoa_fisica(
+        self, pessoa_data: PessoaFisicaCreate
+    ) -> PessoaFisica:
         usuario = Usuario(
             nome=pessoa_data.usuario.nome,
             email=pessoa_data.usuario.email,
             senha=self._hash_password(pessoa_data.usuario.senha),
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
         self.session.add(usuario)
         await self.session.flush()
@@ -39,7 +44,7 @@ class UsuarioService:
         pessoa = PessoaFisica(
             cpf=pessoa_data.cpf,
             data_nascimento=pessoa_data.data_nascimento,
-            usuario_id=usuario.id
+            usuario_id=usuario.id,
         )
         self.session.add(pessoa)
         await self.session.commit()
@@ -52,13 +57,15 @@ class UsuarioService:
         )
         return result.scalar_one()
 
-    async def create_pessoa_juridica(self, pessoa_data: PessoaJuridicaCreate) -> PessoaJuridica:
+    async def create_pessoa_juridica(
+        self, pessoa_data: PessoaJuridicaCreate
+    ) -> PessoaJuridica:
         usuario = Usuario(
             nome=pessoa_data.usuario.nome,
             email=pessoa_data.usuario.email,
             senha=self._hash_password(pessoa_data.usuario.senha),
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
         self.session.add(usuario)
         await self.session.flush()
@@ -66,7 +73,7 @@ class UsuarioService:
         pessoa = PessoaJuridica(
             cnpj=pessoa_data.cnpj,
             razao_social=pessoa_data.razao_social,
-            usuario_id=usuario.id
+            usuario_id=usuario.id,
         )
         self.session.add(pessoa)
         await self.session.commit()
@@ -119,13 +126,17 @@ class UsuarioService:
         )
         return result.scalar_one_or_none()
 
-    async def get_pessoa_juridica_by_id(self, pessoa_id: int) -> Optional[PessoaJuridica]:
+    async def get_pessoa_juridica_by_id(
+        self, pessoa_id: int
+    ) -> Optional[PessoaJuridica]:
         result = await self.session.execute(
             select(PessoaJuridica).where(PessoaJuridica.id == pessoa_id)
         )
         return result.scalar_one_or_none()
 
-    async def update_usuario(self, usuario_id: int, usuario_data: UsuarioUpdate) -> Optional[Usuario]:
+    async def update_usuario(
+        self, usuario_id: int, usuario_data: UsuarioUpdate
+    ) -> Optional[Usuario]:
         usuario = await self.get_usuario_by_id(usuario_id)
         if not usuario:
             return None
@@ -142,7 +153,9 @@ class UsuarioService:
         await self.session.refresh(usuario)
         return usuario
 
-    async def update_pessoa_fisica(self, pessoa_id: int, pessoa_data: PessoaFisicaUpdate) -> Optional[PessoaFisica]:
+    async def update_pessoa_fisica(
+        self, pessoa_id: int, pessoa_data: PessoaFisicaUpdate
+    ) -> Optional[PessoaFisica]:
         result = await self.session.execute(
             select(PessoaFisica).where(PessoaFisica.id == pessoa_id)
         )
@@ -158,7 +171,9 @@ class UsuarioService:
         await self.session.refresh(pessoa)
         return pessoa
 
-    async def update_pessoa_juridica(self, pessoa_id: int, pessoa_data: PessoaJuridicaUpdate) -> Optional[PessoaJuridica]:
+    async def update_pessoa_juridica(
+        self, pessoa_id: int, pessoa_data: PessoaJuridicaUpdate
+    ) -> Optional[PessoaJuridica]:
         result = await self.session.execute(
             select(PessoaJuridica).where(PessoaJuridica.id == pessoa_id)
         )
@@ -204,7 +219,7 @@ class UsuarioService:
             select(Usuario).where(
                 or_(
                     Usuario.nome.ilike(f"%{search}%"),
-                    Usuario.email.ilike(f"%{search}%")
+                    Usuario.email.ilike(f"%{search}%"),
                 )
             )
         )
