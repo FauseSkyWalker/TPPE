@@ -20,10 +20,8 @@ import axios from 'axios';
 
 const validationSchema = yup.object({
   modelo: yup.string().required('Modelo é obrigatório'),
-  marca: yup.string().required('Marca é obrigatória'),
-  ano: yup.number().required('Ano é obrigatório'),
-  preco_diaria: yup.number().required('Preço da diária é obrigatório'),
-  disponivel: yup.boolean(),
+  placa: yup.string().required('Placa é obrigatória').max(7, 'Placa deve ter no máximo 7 caracteres'),
+  valor_diaria: yup.number().required('Valor da diária é obrigatório').positive('Valor deve ser positivo'),
 });
 
 const Aluguel = () => {
@@ -35,10 +33,8 @@ const Aluguel = () => {
   const formik = useFormik({
     initialValues: {
       modelo: '',
-      marca: '',
-      ano: '',
-      preco_diaria: '',
-      disponivel: true,
+      placa: '',
+      valor_diaria: '',
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -90,15 +86,32 @@ const Aluguel = () => {
     setCarroSelecionado(null);
   };
 
+  const [dataInicio, setDataInicio] = useState('');
+  const [dataFim, setDataFim] = useState('');
+
+  const calcularValorTotal = () => {
+    if (!dataInicio || !dataFim || !carroSelecionado) return 0;
+    const inicio = new Date(dataInicio);
+    const fim = new Date(dataFim);
+    const diffDias = Math.ceil((fim - inicio) / (1000 * 60 * 60 * 24));
+    return diffDias * carroSelecionado.valor_diaria;
+  };
+
   const handleConfirmarAluguel = async () => {
+    if (!dataInicio || !dataFim) {
+      alert('Por favor, selecione as datas de início e fim do aluguel');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       await axios.post(
         'http://localhost:8000/api/aluguel/alugueis',
         {
           carro_id: carroSelecionado.id,
-          data_inicio: new Date().toISOString(),
-          data_fim: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 dias
+          data_inicio: dataInicio,
+          data_fim: dataFim,
+          valor: calcularValorTotal(),
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -127,12 +140,9 @@ const Aluguel = () => {
           <Grid item xs={12} sm={6} md={4} key={carro.id}>
             <Card>
               <CardContent>
-                <Typography variant="h6">{carro.marca} {carro.modelo}</Typography>
-                <Typography>Ano: {carro.ano}</Typography>
-                <Typography>Preço da diária: R$ {carro.preco_diaria}</Typography>
-                <Typography>
-                  Status: {carro.disponivel ? 'Disponível' : 'Indisponível'}
-                </Typography>
+                <Typography variant="h6">{carro.modelo}</Typography>
+                <Typography>Placa: {carro.placa}</Typography>
+                <Typography>Valor da diária: R$ {carro.valor_diaria}</Typography>
               </CardContent>
               <CardActions>
                 <Button
@@ -167,37 +177,27 @@ const Aluguel = () => {
             <TextField
               fullWidth
               margin="normal"
-              id="marca"
-              name="marca"
-              label="Marca"
-              value={formik.values.marca}
+              id="placa"
+              name="placa"
+              label="Placa"
+              value={formik.values.placa}
               onChange={formik.handleChange}
-              error={formik.touched.marca && Boolean(formik.errors.marca)}
-              helperText={formik.touched.marca && formik.errors.marca}
+              error={formik.touched.placa && Boolean(formik.errors.placa)}
+              helperText={formik.touched.placa && formik.errors.placa}
+              inputProps={{ maxLength: 7 }}
             />
             <TextField
               fullWidth
               margin="normal"
-              id="ano"
-              name="ano"
-              label="Ano"
+              id="valor_diaria"
+              name="valor_diaria"
+              label="Valor da Diária"
               type="number"
-              value={formik.values.ano}
+              value={formik.values.valor_diaria}
               onChange={formik.handleChange}
-              error={formik.touched.ano && Boolean(formik.errors.ano)}
-              helperText={formik.touched.ano && formik.errors.ano}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              id="preco_diaria"
-              name="preco_diaria"
-              label="Preço da Diária"
-              type="number"
-              value={formik.values.preco_diaria}
-              onChange={formik.handleChange}
-              error={formik.touched.preco_diaria && Boolean(formik.errors.preco_diaria)}
-              helperText={formik.touched.preco_diaria && formik.errors.preco_diaria}
+              error={formik.touched.valor_diaria && Boolean(formik.errors.valor_diaria)}
+              helperText={formik.touched.valor_diaria && formik.errors.valor_diaria}
+              inputProps={{ min: 0, step: 0.01 }}
             />
           </DialogContent>
           <DialogActions>
@@ -207,24 +207,57 @@ const Aluguel = () => {
         </form>
       </Dialog>
 
-      <Dialog open={openAlugar} onClose={handleCloseAlugar}>
+      <Dialog open={openAlugar} onClose={handleCloseAlugar} maxWidth="sm" fullWidth>
         <DialogTitle>Confirmar Aluguel</DialogTitle>
         <DialogContent>
           {carroSelecionado && (
-            <>
-              <Typography>Carro: {carroSelecionado.marca} {carroSelecionado.modelo}</Typography>
-              <Typography>Ano: {carroSelecionado.ano}</Typography>
-              <Typography>Preço da diária: R$ {carroSelecionado.preco_diaria}</Typography>
-              <Typography>Período: 7 dias</Typography>
-              <Typography>
-                Valor total: R$ {carroSelecionado.preco_diaria * 7}
-              </Typography>
-            </>
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="h6" gutterBottom>{carroSelecionado.modelo}</Typography>
+              <Typography>Placa: {carroSelecionado.placa}</Typography>
+              <Typography gutterBottom>Valor da diária: R$ {carroSelecionado.valor_diaria}</Typography>
+              
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Data de Início"
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Data de Fim"
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+              
+              {dataInicio && dataFim && (
+                <Box sx={{ mt: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Resumo do Aluguel
+                  </Typography>
+                  <Typography>
+                    Período: {new Date(dataInicio).toLocaleDateString()} até {new Date(dataFim).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="h6" sx={{ mt: 1, color: 'primary.main' }}>
+                    Valor total: R$ {calcularValorTotal()}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
           )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAlugar}>Cancelar</Button>
-          <Button onClick={handleConfirmarAluguel} variant="contained">
+          <Button 
+            onClick={handleConfirmarAluguel} 
+            variant="contained"
+            disabled={!dataInicio || !dataFim}
+          >
             Confirmar Aluguel
           </Button>
         </DialogActions>

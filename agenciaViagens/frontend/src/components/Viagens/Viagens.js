@@ -19,12 +19,9 @@ import * as yup from 'yup';
 import axios from 'axios';
 
 const validationSchema = yup.object({
-  origem: yup.string().required('Origem é obrigatória'),
-  destino: yup.string().required('Destino é obrigatório'),
+  nome: yup.string().required('Nome do voo é obrigatório'),
   data_partida: yup.string().required('Data de partida é obrigatória'),
   data_chegada: yup.string().required('Data de chegada é obrigatória'),
-  preco: yup.number().required('Preço é obrigatório'),
-  assentos_disponiveis: yup.number().required('Número de assentos é obrigatório'),
 });
 
 const Viagens = () => {
@@ -35,12 +32,9 @@ const Viagens = () => {
 
   const formik = useFormik({
     initialValues: {
-      origem: '',
-      destino: '',
+      nome: '',
       data_partida: '',
       data_chegada: '',
-      preco: '',
-      assentos_disponiveis: '',
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -128,11 +122,9 @@ const Viagens = () => {
           <Grid item xs={12} sm={6} md={4} key={voo.id}>
             <Card>
               <CardContent>
-                <Typography variant="h6">{voo.origem} → {voo.destino}</Typography>
+                <Typography variant="h6">{voo.nome}</Typography>
                 <Typography>Partida: {new Date(voo.data_partida).toLocaleString()}</Typography>
                 <Typography>Chegada: {new Date(voo.data_chegada).toLocaleString()}</Typography>
-                <Typography>Preço: R$ {voo.preco}</Typography>
-                <Typography>Assentos disponíveis: {voo.assentos_disponiveis}</Typography>
               </CardContent>
               <CardActions>
                 <Button
@@ -156,24 +148,13 @@ const Viagens = () => {
             <TextField
               fullWidth
               margin="normal"
-              id="origem"
-              name="origem"
-              label="Origem"
-              value={formik.values.origem}
+              id="nome"
+              name="nome"
+              label="Nome do Voo"
+              value={formik.values.nome}
               onChange={formik.handleChange}
-              error={formik.touched.origem && Boolean(formik.errors.origem)}
-              helperText={formik.touched.origem && formik.errors.origem}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              id="destino"
-              name="destino"
-              label="Destino"
-              value={formik.values.destino}
-              onChange={formik.handleChange}
-              error={formik.touched.destino && Boolean(formik.errors.destino)}
-              helperText={formik.touched.destino && formik.errors.destino}
+              error={formik.touched.nome && Boolean(formik.errors.nome)}
+              helperText={formik.touched.nome && formik.errors.nome}
             />
             <TextField
               fullWidth
@@ -201,30 +182,6 @@ const Viagens = () => {
               error={formik.touched.data_chegada && Boolean(formik.errors.data_chegada)}
               helperText={formik.touched.data_chegada && formik.errors.data_chegada}
             />
-            <TextField
-              fullWidth
-              margin="normal"
-              id="preco"
-              name="preco"
-              label="Preço"
-              type="number"
-              value={formik.values.preco}
-              onChange={formik.handleChange}
-              error={formik.touched.preco && Boolean(formik.errors.preco)}
-              helperText={formik.touched.preco && formik.errors.preco}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              id="assentos_disponiveis"
-              name="assentos_disponiveis"
-              label="Assentos Disponíveis"
-              type="number"
-              value={formik.values.assentos_disponiveis}
-              onChange={formik.handleChange}
-              error={formik.touched.assentos_disponiveis && Boolean(formik.errors.assentos_disponiveis)}
-              helperText={formik.touched.assentos_disponiveis && formik.errors.assentos_disponiveis}
-            />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
@@ -238,9 +195,9 @@ const Viagens = () => {
         <DialogContent>
           {vooSelecionado && (
             <>
-              <Typography>Voo: {vooSelecionado.origem} → {vooSelecionado.destino}</Typography>
-              <Typography>Data: {new Date(vooSelecionado.data_partida).toLocaleString()}</Typography>
-              <Typography>Preço: R$ {vooSelecionado.preco}</Typography>
+              <Typography>Voo: {vooSelecionado.nome}</Typography>
+              <Typography>Partida: {new Date(vooSelecionado.data_partida).toLocaleString()}</Typography>
+              <Typography>Chegada: {new Date(vooSelecionado.data_chegada).toLocaleString()}</Typography>
             </>
           )}
         </DialogContent>
