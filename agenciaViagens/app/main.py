@@ -7,7 +7,6 @@ from .controllers import (
 )
 from .database import create_tables
 import logging
-
 # Configurar logging
 logging.basicConfig(
     level=logging.INFO,
@@ -26,7 +25,7 @@ app = FastAPI(
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Substitua "*" pelo domínio do frontend, se necessário
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,10 +33,10 @@ app.add_middleware(
 
 # Registrar routers
 app.include_router(auth_router, prefix="/api")
-app.include_router(usuario_router)
-app.include_router(aluguel_router)
-app.include_router(pagamento_router)
-app.include_router(viagem_router)
+app.include_router(usuario_router, prefix="/api")
+app.include_router(aluguel_router, prefix="/api")
+app.include_router(pagamento_router, prefix="/api")
+app.include_router(viagem_router, prefix="/api")
 
 # Tratamento de exceções
 @app.exception_handler(Exception)
@@ -62,3 +61,4 @@ async def startup():
 @app.get("/")
 async def root():
     return {"message": "API is running"}
+

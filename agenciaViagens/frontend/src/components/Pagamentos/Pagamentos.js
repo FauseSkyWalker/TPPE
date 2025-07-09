@@ -100,7 +100,8 @@ const Pagamentos = () => {
             break;
         }
 
-        await axios.post('http://localhost:8000/api/pagamentos', payload, {
+        const endpoint = `http://localhost:8000/api/pagamentos/${values.tipo.toLowerCase()}`;
+        await axios.post(endpoint, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         handleClose();
@@ -114,7 +115,7 @@ const Pagamentos = () => {
   const fetchPagamentos = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8000/api/pagamentos', {
+      const response = await axios.get('http://localhost:8000/api/pagamentos/', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPagamentos(response.data);

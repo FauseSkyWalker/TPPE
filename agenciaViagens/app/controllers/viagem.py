@@ -11,7 +11,7 @@ from ..schemas import (
 )
 
 router = APIRouter(
-    prefix="/api/viagens",
+    prefix="/viagens",
     tags=["viagens"],
     responses={
         401: {"description": "Não autorizado"},

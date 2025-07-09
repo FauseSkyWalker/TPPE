@@ -23,19 +23,23 @@ const validationSchema = yup.object({
   tipo: yup.string().required('Tipo de pessoa é obrigatório'),
   cpf: yup.string().when('tipo', {
     is: 'fisica',
-    then: yup.string().required('CPF é obrigatório'),
+    then: () => yup.string().required('CPF é obrigatório'),
+    otherwise: () => yup.string()
   }),
   data_nascimento: yup.string().when('tipo', {
     is: 'fisica',
-    then: yup.string().required('Data de nascimento é obrigatória'),
+    then: () => yup.string().required('Data de nascimento é obrigatória'),
+    otherwise: () => yup.string()
   }),
   cnpj: yup.string().when('tipo', {
     is: 'juridica',
-    then: yup.string().required('CNPJ é obrigatório'),
+    then: () => yup.string().required('CNPJ é obrigatório'),
+    otherwise: () => yup.string()
   }),
   razao_social: yup.string().when('tipo', {
     is: 'juridica',
-    then: yup.string().required('Razão social é obrigatória'),
+    then: () => yup.string().required('Razão social é obrigatória'),
+    otherwise: () => yup.string()
   }),
 });
 

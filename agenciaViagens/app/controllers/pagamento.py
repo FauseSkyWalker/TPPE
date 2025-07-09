@@ -19,7 +19,7 @@ router = APIRouter(
     }
 )
 
-@router.post("/pagamentos/boleto", response_model=Boleto)
+@router.post("/boleto", response_model=Boleto)
 async def criar_pagamento_boleto(
     pagamento: BoletoCreate,
     db: AsyncSession = Depends(get_db)
@@ -30,7 +30,7 @@ async def criar_pagamento_boleto(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.post("/pagamentos/cartao", response_model=Cartao)
+@router.post("/cartao", response_model=Cartao)
 async def criar_pagamento_cartao(
     pagamento: CartaoCreate,
     db: AsyncSession = Depends(get_db)
@@ -41,7 +41,7 @@ async def criar_pagamento_cartao(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.post("/pagamentos/pix", response_model=Pix)
+@router.post("/pix", response_model=Pix)
 async def criar_pagamento_pix(
     pagamento: PixCreate,
     db: AsyncSession = Depends(get_db)
@@ -52,7 +52,7 @@ async def criar_pagamento_pix(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/pagamentos", response_model=List[Pagamento])
+@router.get("/", response_model=List[Pagamento])
 async def listar_pagamentos(db: AsyncSession = Depends(get_db)):
     try:
         service = PagamentoService(db)

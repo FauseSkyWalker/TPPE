@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
-import axios from 'axios';
+import { login } from '../../services/auth';
 import { useNavigate } from 'react-router-dom';
 
 const validationSchema = yup.object({
@@ -27,8 +27,7 @@ const Login = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('http://localhost:8000/api/auth/login', values);
-        localStorage.setItem('token', response.data.access_token);
+        await login(values.email, values.senha);
         navigate('/');
       } catch (error) {
         console.error('Erro ao fazer login:', error);
