@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import date
 from typing import Optional
 
 class CarroBase(BaseModel):
     modelo: str
-    placa: str
+    placa: str = Field(max_length=7)
     valor_diaria: float
 
 class CarroCreate(CarroBase):
@@ -58,8 +58,10 @@ class AluguelHotelCreate(AluguelHotelBase):
 
 class AluguelHotel(AluguelHotelBase):
     id: int
-    hotel: Hotel
+    hotel: Optional[Hotel] = None
     pagamento_id: Optional[int] = None
+    created_at: Optional[date] = None
+    updated_at: Optional[date] = None
 
     class Config:
         from_attributes = True

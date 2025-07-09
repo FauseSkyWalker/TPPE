@@ -13,22 +13,22 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   api:
-    build: ./agenciaViagens
+    build: 
+      context: ./agenciaViagens
+      dockerfile: Dockerfile
     environment:
       - DATABASE_URL=${DATABASE_URL}
+      - API_HOST=${API_HOST}
+      - API_PORT=${API_PORT}
+      - API_RELOAD=${API_RELOAD}
       - RUN_TESTS=${RUN_TESTS}
-    depends_on:
-      - db
     ports:
       - "8000:8000"
-    command: >
-      bash -c "
-        uvicorn app.main:app --host 0.0.0.0 --port 8000 &
-        if [ \"$RUN_TESTS\" = \"true\" ]; then
-          sleep 5 && pytest tests --disable-warnings || true
-        fi
-        wait
-      "
+    volumes:
+      - ./agenciaViagens:/app
+    depends_on:
+      - db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app
 
   pgadmin:
     image: dpage/pgadmin4
@@ -37,8 +37,11 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - db
 
 volumes:
   postgres_data:
+  pgadmin_data:

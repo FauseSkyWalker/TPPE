@@ -1,4 +1,3 @@
-from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 import os
@@ -7,13 +6,10 @@ from .models import Base
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Criar engine síncrona para criação de tabelas
-engine = create_engine(DATABASE_URL)
-
-# Criar engine assíncrona para operações
-async_engine = create_async_engine(DATABASE_URL)
+# Criar engine assíncrona
+engine = create_async_engine(DATABASE_URL)
 AsyncSessionLocal = sessionmaker(
-    bind=async_engine,
+    bind=engine,
     class_=AsyncSession,
     expire_on_commit=False
 )
@@ -26,10 +22,12 @@ async def get_db():
         finally:
             await session.close()
 
-def create_tables():
+async def create_tables():
     """Criar todas as tabelas no banco de dados."""
-    Base.metadata.create_all(bind=engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
-def drop_tables():
+async def drop_tables():
     """Remover todas as tabelas do banco de dados."""
-    Base.metadata.drop_all(bind=engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)

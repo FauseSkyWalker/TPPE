@@ -1,5 +1,5 @@
 from .usuario import UsuarioRepository, PessoaFisicaRepository, PessoaJuridicaRepository
-from .viagem import PassageiroRepository, VooRepository, AeroportoRepository, PassagemRepository
+from .viagem import PassageiroRepository, VooRepository, PassagemRepository
 from .pagamento import PagamentoRepository
 from .aluguel import CarroRepository, HotelRepository, AluguelCarroRepository, AluguelHotelRepository
 
@@ -9,7 +9,7 @@ __all__ = [
     'PessoaJuridicaRepository',
     'PassageiroRepository',
     'VooRepository',
-    'AeroportoRepository',
+
     'PassagemRepository',
     'PagamentoRepository',
     'CarroRepository',

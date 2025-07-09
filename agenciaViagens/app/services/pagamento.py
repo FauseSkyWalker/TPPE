@@ -25,3 +25,6 @@ class PagamentoService:
             TipoPagamento.PIX,
             pagamento.model_dump()
         )
+
+    async def listar_pagamentos(self):
+        return await self.pagamento_repo.get_all()

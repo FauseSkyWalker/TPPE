@@ -1,60 +1,53 @@
-from pydantic import BaseModel
-from datetime import date, datetime
+from pydantic import BaseModel, ConfigDict
+from datetime import datetime
 from typing import Optional
-from ..enums import TipoPassageiro
+from datetime import date
 
 class PassageiroBase(BaseModel):
     nome: str
     documento: str
-    tipo_passageiro: TipoPassageiro
+    tipo_passageiro: str
 
 class PassageiroCreate(PassageiroBase):
     pass
 
 class Passageiro(PassageiroBase):
     id: int
-    created_at: date
-    updated_at: date
 
-    class Config:
-        from_attributes = True
-
-class AeroportoBase(BaseModel):
-    codigo: str
-    nome: str
-    cidade: str
-
-class AeroportoCreate(AeroportoBase):
-    pass
-
-class Aeroporto(AeroportoBase):
-    id: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        exclude={'created_at', 'updated_at'}
+    )
 
 class VooBase(BaseModel):
-    numero: str
+    nome: str
     data_partida: datetime
     data_chegada: datetime
-    origem_id: int
-    destino_id: int
+
+    model_config = ConfigDict(
+        json_encoders={
+            datetime: lambda dt: dt.replace(tzinfo=None)
+        }
+    )
 
 class VooCreate(VooBase):
     pass
 
-class Voo(VooBase):
+class Voo(BaseModel):
     id: int
-    origem: Aeroporto
-    destino: Aeroporto
+    nome: str
+    data_partida: datetime
+    data_chegada: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        exclude={'created_at', 'updated_at'}
+    )
 
 class PassagemBase(BaseModel):
     numero: str
     valor: float
-    data: date
+    data: datetime
     passageiro_id: int
     voo_id: int
 
@@ -63,9 +56,9 @@ class PassagemCreate(PassagemBase):
 
 class Passagem(PassagemBase):
     id: int
-    passageiro: Passageiro
-    voo: Voo
     pagamento_id: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        exclude={'created_at', 'updated_at'}
+    )

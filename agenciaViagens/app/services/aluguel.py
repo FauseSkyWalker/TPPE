@@ -1,4 +1,5 @@
 from datetime import date
+import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..repositories import (
     CarroRepository, HotelRepository,
@@ -18,14 +19,50 @@ class AluguelService:
         self.aluguel_hotel_repo = AluguelHotelRepository(session)
 
     async def criar_carro(self, carro: CarroCreate):
+        # Validar formato da placa
+        placa = carro.placa.upper()
+        if not re.match(r'^[A-Z0-9]{7}$', placa):
+            raise ValueError("Placa deve ter exatamente 7 caracteres (letras maiúsculas e números)")
+
         # Verificar se placa já existe
-        if await self.carro_repo.get_by_placa(carro.placa):
+        if await self.carro_repo.get_by_placa(placa):
             raise ValueError("Placa já cadastrada")
         
-        return await self.carro_repo.create(carro.model_dump())
+        # Converter placa para maiúsculo
+        carro_dict = carro.model_dump()
+        carro_dict['placa'] = placa
+        return await self.carro_repo.create(carro_dict)
 
     async def criar_hotel(self, hotel: HotelCreate):
         return await self.hotel_repo.create(hotel.model_dump())
+
+    async def deletar_carro(self, id: int):
+        # Verificar se carro existe
+        carro = await self.carro_repo.get(id)
+        if not carro:
+            raise ValueError("Carro não encontrado")
+
+        # Verificar se carro tem aluguéis
+        alugueis = await self.aluguel_carro_repo.get_by_carro(id)
+        if alugueis:
+            raise ValueError("Não é possível deletar um carro que possui aluguéis")
+
+        # Deletar carro
+        await self.carro_repo.delete(id)
+
+    async def deletar_hotel(self, id: int):
+        # Verificar se hotel existe
+        hotel = await self.hotel_repo.get(id)
+        if not hotel:
+            raise ValueError("Hotel não encontrado")
+
+        # Verificar se hotel tem aluguéis
+        alugueis = await self.aluguel_hotel_repo.get_by_hotel(id)
+        if alugueis:
+            raise ValueError("Não é possível deletar um hotel que possui aluguéis")
+
+        # Deletar hotel
+        await self.hotel_repo.delete(id)
 
     async def alugar_carro(self, aluguel: AluguelCarroCreate):
         # Verificar se carro existe

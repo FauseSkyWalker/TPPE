@@ -6,11 +6,20 @@ from ..services import ViagemService
 from ..schemas import (
     PassageiroCreate, PassageiroCreate, Passageiro,
     VooCreate, Voo,
-    AeroportoCreate, Aeroporto,
+
     PassagemCreate, Passagem
 )
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/viagens",
+    tags=["viagens"],
+    responses={
+        401: {"description": "Não autorizado"},
+        403: {"description": "Acesso proibido"},
+        404: {"description": "Recurso não encontrado"},
+        500: {"description": "Erro interno do servidor"}
+    }
+)
 
 @router.post("/passageiros", response_model=Passageiro)
 async def criar_passageiro(

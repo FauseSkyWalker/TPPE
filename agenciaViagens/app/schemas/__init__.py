@@ -5,7 +5,7 @@ from .usuario import (
 )
 from .viagem import (
     Passageiro, PassageiroCreate,
-    Aeroporto, AeroportoCreate,
+
     Voo, VooCreate,
     Passagem, PassagemCreate
 )
@@ -25,7 +25,7 @@ __all__ = [
     'PessoaFisica', 'PessoaFisicaCreate',
     'PessoaJuridica', 'PessoaJuridicaCreate',
     'Passageiro', 'PassageiroCreate',
-    'Aeroporto', 'AeroportoCreate',
+
     'Voo', 'VooCreate',
     'Passagem', 'PassagemCreate',
     'Pagamento', 'Boleto', 'Cartao', 'Pix',

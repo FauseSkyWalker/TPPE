@@ -10,7 +10,16 @@ from ..schemas import (
     AluguelHotelCreate, AluguelHotel
 )
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/alugueis",
+    tags=["alugueis"],
+    responses={
+        401: {"description": "Não autorizado"},
+        403: {"description": "Acesso proibido"},
+        404: {"description": "Recurso não encontrado"},
+        500: {"description": "Erro interno do servidor"}
+    }
+)
 
 @router.post("/carros", response_model=Carro)
 async def criar_carro(
@@ -43,6 +52,30 @@ async def criar_hotel(
 async def listar_hoteis(db: AsyncSession = Depends(get_db)):
     service = AluguelService(db)
     return await service.hotel_repo.get_all()
+
+@router.delete("/carros/{id}")
+async def deletar_carro(
+    id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    try:
+        service = AluguelService(db)
+        await service.deletar_carro(id)
+        return {"message": "Carro deletado com sucesso"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.delete("/hoteis/{id}")
+async def deletar_hotel(
+    id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    try:
+        service = AluguelService(db)
+        await service.deletar_hotel(id)
+        return {"message": "Hotel deletado com sucesso"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 @router.post("/alugueis/carros", response_model=AluguelCarro)
 async def alugar_carro(

@@ -1,6 +1,7 @@
 import pytest
 from app.models import Usuario, PessoaFisica, Passageiro
 from app.enums import TipoPassageiro
+from app.services.passageiro_service import calcular_valor_passagem
 from datetime import date
 
 @pytest.mark.parametrize("nome,email,senha,esperado", [
@@ -46,4 +47,4 @@ def test_calculo_valor_passagem(tipo_passageiro, valor_esperado):
         tipo_passageiro=tipo_passageiro
     )
     valor_base = 100.0
-    assert passageiro.calcular_valor_passagem(valor_base) == valor_base * valor_esperado
+    assert calcular_valor_passagem(passageiro, valor_base) == valor_base * valor_esperado

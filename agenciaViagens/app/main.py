@@ -1,12 +1,26 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from .controllers import usuario, viagem, pagamento, aluguel
+from fastapi.responses import JSONResponse
+from .controllers import (
+    usuario_router, auth_router,
+    aluguel_router, pagamento_router, viagem_router
+)
 from .database import create_tables
+import logging
+
+# Configurar logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 app = FastAPI(
     title="Agência de Viagens API",
-    description="API para sistema de agência de viagens",
-    version="1.0.0"
+    description="API para sistema de agência de viagens com autenticação JWT",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
 
 # Configurar CORS
@@ -19,15 +33,31 @@ app.add_middleware(
 )
 
 # Registrar routers
-app.include_router(usuario.router, prefix="/api/usuarios", tags=["Usuários"])
-app.include_router(viagem.router, prefix="/api/viagens", tags=["Viagens"])
-app.include_router(pagamento.router, prefix="/api/pagamentos", tags=["Pagamentos"])
-app.include_router(aluguel.router, prefix="/api/alugueis", tags=["Aluguéis"])
+app.include_router(auth_router, prefix="/api")
+app.include_router(usuario_router)
+app.include_router(aluguel_router)
+app.include_router(pagamento_router)
+app.include_router(viagem_router)
+
+# Tratamento de exceções
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
+    )
+
+# Log de requisições
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logging.info(f"{request.method} {request.url}")
+    response = await call_next(request)
+    return response
 
 @app.on_event("startup")
-def startup():
+async def startup():
     """Criar tabelas no banco de dados durante a inicialização."""
-    create_tables()
+    await create_tables()
 
 @app.get("/")
 async def root():

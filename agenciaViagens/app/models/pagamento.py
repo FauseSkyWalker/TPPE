@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, String, Enum
+from sqlalchemy import Column, Float, String, Enum, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from .base import BaseModel
 from ..enums import TipoPagamento
@@ -27,7 +27,8 @@ class Boleto(Pagamento):
     codigo_barras = Column(String(48), nullable=False)
     
     __mapper_args__ = {
-        'polymorphic_identity': TipoPagamento.BOLETO
+        'polymorphic_identity': TipoPagamento.BOLETO,
+        'inherit_condition': id == Pagamento.id
     }
 
 class Cartao(Pagamento):
@@ -39,7 +40,8 @@ class Cartao(Pagamento):
     cvv = Column(String(3), nullable=False)
     
     __mapper_args__ = {
-        'polymorphic_identity': TipoPagamento.CARTAO
+        'polymorphic_identity': TipoPagamento.CARTAO,
+        'inherit_condition': id == Pagamento.id
     }
 
 class Pix(Pagamento):
@@ -49,5 +51,6 @@ class Pix(Pagamento):
     chave = Column(String(100), nullable=False)
     
     __mapper_args__ = {
-        'polymorphic_identity': TipoPagamento.PIX
+        'polymorphic_identity': TipoPagamento.PIX,
+        'inherit_condition': id == Pagamento.id
     }

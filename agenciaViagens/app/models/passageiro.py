@@ -12,3 +12,6 @@ class Passageiro(BaseModel):
     
     # Relacionamentos
     passagens = relationship("Passagem", back_populates="passageiro")
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
