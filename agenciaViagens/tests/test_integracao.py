@@ -4,7 +4,6 @@ from app.main import app
 
 client = TestClient(app)
 
-
 @pytest.mark.asyncio
 async def test_health_check():
     response = client.get("/")

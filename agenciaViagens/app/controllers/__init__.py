@@ -5,9 +5,9 @@ from .pagamento import router as pagamento_router
 from .viagem import router as viagem_router
 
 __all__ = [
-    "usuario_router",
-    "auth_router",
-    "aluguel_router",
-    "pagamento_router",
-    "viagem_router",
+    'usuario_router',
+    'auth_router',
+    'aluguel_router',
+    'pagamento_router',
+    'viagem_router'
 ]

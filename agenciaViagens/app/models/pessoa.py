@@ -3,7 +3,6 @@ from sqlalchemy import Column, String, Date, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from .base import BaseModel
 
-
 class PessoaFisica(BaseModel):
     __tablename__ = "pessoas_fisicas"
 
@@ -15,8 +14,8 @@ class PessoaFisica(BaseModel):
     usuario = relationship("Usuario", back_populates="pessoa_fisica", lazy="joined")
 
     def __init__(self, **kwargs):
-        cpf = kwargs.get("cpf")
-        data_nascimento = kwargs.get("data_nascimento")
+        cpf = kwargs.get('cpf')
+        data_nascimento = kwargs.get('data_nascimento')
 
         if not cpf or len(cpf) != 11 or not cpf.isdigit():
             raise ValueError("CPF inválido")
@@ -26,7 +25,6 @@ class PessoaFisica(BaseModel):
             raise ValueError("Data de nascimento não pode ser futura")
 
         super().__init__(**kwargs)
-
 
 class PessoaJuridica(BaseModel):
     __tablename__ = "pessoas_juridicas"
@@ -39,9 +37,9 @@ class PessoaJuridica(BaseModel):
     usuario = relationship("Usuario", back_populates="pessoa_juridica", lazy="joined")
 
     def __init__(self, **kwargs):
-        cnpj = kwargs.get("cnpj")
+        cnpj = kwargs.get('cnpj')
         if not cnpj or len(cnpj) != 14 or not cnpj.isdigit():
             raise ValueError("CNPJ inválido")
-        if not kwargs.get("razao_social"):
+        if not kwargs.get('razao_social'):
             raise ValueError("Razão social não pode ser vazia")
         super().__init__(**kwargs)

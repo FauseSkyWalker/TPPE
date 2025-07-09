@@ -4,7 +4,6 @@ from sqlalchemy import select
 from .base import BaseRepository
 from ..models import Carro, Hotel, AluguelCarro, AluguelHotel
 
-
 class CarroRepository(BaseRepository[Carro]):
     def __init__(self, session: AsyncSession):
         super().__init__(Carro, session)
@@ -14,11 +13,9 @@ class CarroRepository(BaseRepository[Carro]):
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-
 class HotelRepository(BaseRepository[Hotel]):
     def __init__(self, session: AsyncSession):
         super().__init__(Hotel, session)
-
 
 class AluguelCarroRepository(BaseRepository[AluguelCarro]):
     def __init__(self, session: AsyncSession):
@@ -28,7 +25,6 @@ class AluguelCarroRepository(BaseRepository[AluguelCarro]):
         query = select(self.model).where(self.model.carro_id == carro_id)
         result = await self.session.execute(query)
         return result.scalars().all()
-
 
 class AluguelHotelRepository(BaseRepository[AluguelHotel]):
     def __init__(self, session: AsyncSession):
