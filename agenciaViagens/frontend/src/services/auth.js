@@ -13,14 +13,14 @@ export const setAuthToken = (token) => {
 };
 
 export const login = async (email, senha) => {
-  try {
-    const response = await axios.post(`${API_URL}/auth/login`, { email, senha });
+  const response = await axios.post(`${API_URL}/auth/login`, { email, senha });
+  
+  if (response.data.access_token) {
     const token = response.data.access_token;
     setAuthToken(token);
     return response.data;
-  } catch (error) {
-    throw error;
   }
+  return false;
 };
 
 export const logout = () => {
