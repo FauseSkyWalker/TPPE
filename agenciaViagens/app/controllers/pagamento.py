@@ -9,7 +9,7 @@ from ..schemas import (
 )
 
 router = APIRouter(
-    prefix="/api/pagamentos",
+    prefix="/pagamentos",
     tags=["pagamentos"],
     responses={
         401: {"description": "Não autorizado"},
