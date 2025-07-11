@@ -113,32 +113,12 @@ table(carros) {
   updated_at TIMESTAMP
 }
 
-table(hoteis) {
-  primary_key(id) INTEGER
-  nome VARCHAR(100)
-  endereco VARCHAR(200)
-  valor_diaria DECIMAL(10,2)
-  created_at TIMESTAMP
-  updated_at TIMESTAMP
-}
-
 table(alugueis_carros) {
   primary_key(id) INTEGER
   data_inicio DATE
   data_fim DATE
   valor DECIMAL(10,2)
   foreign_key(carro_id) INTEGER
-  foreign_key(pagamento_id) INTEGER
-  created_at TIMESTAMP
-  updated_at TIMESTAMP
-}
-
-table(alugueis_hoteis) {
-  primary_key(id) INTEGER
-  data_checkin DATE
-  data_checkout DATE
-  valor DECIMAL(10,2)
-  foreign_key(hotel_id) INTEGER
   foreign_key(pagamento_id) INTEGER
   created_at TIMESTAMP
   updated_at TIMESTAMP
@@ -161,8 +141,5 @@ pix }-- pagamentos
 
 alugueis_carros }-- carros
 alugueis_carros }-- pagamentos
-
-alugueis_hoteis }-- hoteis
-alugueis_hoteis }-- pagamentos
 
 @enduml

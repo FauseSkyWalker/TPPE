@@ -65,18 +65,6 @@ class Carro {
     valor_diaria: float
 }
 
-class AluguelHotel {
-    data_checkin: date
-    data_checkout: date
-    valor: float
-}
-
-class Hotel {
-    nome: str
-    endereco: str
-    valor_diaria: float
-}
-
 class Boleto {
     codigo_barras: str
 }
@@ -119,9 +107,6 @@ Pagamento <|-- Pix
 
 Passagem "1" -- "1" Pagamento
 AluguelCarro "1" -- "1" Pagamento
-AluguelHotel "1" -- "1" Pagamento
-
 AluguelCarro "many" -- "1" Carro
-AluguelHotel "many" -- "1" Hotel
 
 @enduml
