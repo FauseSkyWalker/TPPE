@@ -38,3 +38,8 @@ class PassagemRepository(BaseRepository[Passagem]):
         query = select(self.model).where(self.model.passageiro_id == passageiro_id)
         result = await self.session.execute(query)
         return result.scalars().all()
+
+    async def get_by_voo(self, voo_id: int) -> List[Passagem]:
+        query = select(self.model).where(self.model.voo_id == voo_id)
+        result = await self.session.execute(query)
+        return result.scalars().all()

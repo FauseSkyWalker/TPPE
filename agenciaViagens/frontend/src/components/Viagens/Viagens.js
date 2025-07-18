@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import {
   Container,
-  Typography,
-  Box,
   Button,
   Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
   DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Grid,
   Card,
   CardContent,
   CardActions,
-  Grid,
+  Typography,
+  IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -27,8 +28,6 @@ const validationSchema = yup.object({
 const Viagens = () => {
   const [open, setOpen] = useState(false);
   const [voos, setVoos] = useState([]);
-  const [openCompra, setOpenCompra] = useState(false);
-  const [vooSelecionado, setVooSelecionado] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -76,46 +75,31 @@ const Viagens = () => {
     formik.resetForm();
   };
 
-  const handleComprarPassagem = async (voo) => {
-    setVooSelecionado(voo);
-    setOpenCompra(true);
-  };
-
-  const handleCloseCompra = () => {
-    setOpenCompra(false);
-    setVooSelecionado(null);
-  };
-
-  const handleConfirmarCompra = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'http://localhost:8000/api/viagens/passagens',
-        {
-          voo_id: vooSelecionado.id,
-          tipo_passageiro: 'ADULTO',
-        },
-        {
+  const handleExcluir = async (id) => {
+    if (window.confirm('Tem certeza que deseja excluir este voo?')) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:8000/api/viagens/voos/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      handleCloseCompra();
-      fetchVoos();
-    } catch (error) {
-      console.error('Erro ao comprar passagem:', error);
+        });
+        fetchVoos();
+      } catch (error) {
+        console.error('Erro ao excluir voo:', error);
+        alert(error.response?.data?.detail || 'Erro ao excluir voo');
+      }
     }
   };
 
   return (
     <Container>
-      <Box sx={{ mt: 4, mb: 4 }}>
+      <div style={{ marginTop: '24px' }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Viagens
         </Typography>
         <Button variant="contained" onClick={handleClickOpen}>
           Criar Novo Voo
         </Button>
-      </Box>
+      </div>
 
       <Grid container spacing={3}>
         {voos.map((voo) => (
@@ -127,14 +111,13 @@ const Viagens = () => {
                 <Typography>Chegada: {new Date(voo.data_chegada).toLocaleString()}</Typography>
               </CardContent>
               <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={() => handleComprarPassagem(voo)}
-                  disabled={voo.assentos_disponiveis === 0}
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => handleExcluir(voo.id)}
+                  color="error"
                 >
-                  Comprar Passagem
-                </Button>
+                  <DeleteIcon />
+                </IconButton>
               </CardActions>
             </Card>
           </Grid>
@@ -188,25 +171,6 @@ const Viagens = () => {
             <Button type="submit" variant="contained">Criar</Button>
           </DialogActions>
         </form>
-      </Dialog>
-
-      <Dialog open={openCompra} onClose={handleCloseCompra}>
-        <DialogTitle>Confirmar Compra de Passagem</DialogTitle>
-        <DialogContent>
-          {vooSelecionado && (
-            <>
-              <Typography>Voo: {vooSelecionado.nome}</Typography>
-              <Typography>Partida: {new Date(vooSelecionado.data_partida).toLocaleString()}</Typography>
-              <Typography>Chegada: {new Date(vooSelecionado.data_chegada).toLocaleString()}</Typography>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCompra}>Cancelar</Button>
-          <Button onClick={handleConfirmarCompra} variant="contained">
-            Confirmar Compra
-          </Button>
-        </DialogActions>
       </Dialog>
     </Container>
   );

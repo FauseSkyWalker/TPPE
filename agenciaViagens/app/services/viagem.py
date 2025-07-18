@@ -52,3 +52,14 @@ class ViagemService:
             raise ValueError("Data da passagem deve ser igual à data de partida do voo")
 
         return await self.passagem_repo.create(passagem.model_dump())
+
+    async def excluir_voo(self, voo_id: int):
+        voo = await self.voo_repo.get(voo_id)
+        if not voo:
+            raise ValueError("Voo não encontrado")
+
+        passagens = await self.passagem_repo.get_by_voo(voo_id)
+        if passagens:
+            raise ValueError("Não é possível excluir um voo que possui passagens")
+
+        await self.voo_repo.delete(voo_id)

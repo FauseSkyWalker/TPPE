@@ -63,3 +63,13 @@ async def listar_pagamentos(db: AsyncSession = Depends(get_db)):
         return await service.listar_pagamentos()
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete("/{pagamento_id}", status_code=204)
+async def deletar_pagamento(pagamento_id: int, db: AsyncSession = Depends(get_db)):
+    try:
+        service = PagamentoService(db)
+        await service.deletar_pagamento(pagamento_id)
+        return None
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))

@@ -70,3 +70,13 @@ async def criar_passagem(passagem: PassagemCreate, db: AsyncSession = Depends(ge
 async def listar_passagens(db: AsyncSession = Depends(get_db)):
     service = ViagemService(db)
     return await service.passagem_repo.get_all()
+
+
+@router.delete("/voos/{voo_id}")
+async def excluir_voo(voo_id: int, db: AsyncSession = Depends(get_db)):
+    try:
+        service = ViagemService(db)
+        await service.excluir_voo(voo_id)
+        return {"message": "Voo excluído com sucesso"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

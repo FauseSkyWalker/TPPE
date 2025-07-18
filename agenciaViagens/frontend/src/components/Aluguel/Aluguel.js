@@ -13,14 +13,19 @@ import {
   CardContent,
   CardActions,
   Grid,
+  IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
 
 const validationSchema = yup.object({
   modelo: yup.string().required('Modelo é obrigatório'),
-  placa: yup.string().required('Placa é obrigatória').max(7, 'Placa deve ter no máximo 7 caracteres'),
+  placa: yup.string()
+    .required('Placa é obrigatória')
+    .matches(/^[A-Za-z0-9]{7}$/, 'Placa deve ter exatamente 7 caracteres (letras e números)')
+    .transform(value => value ? value.toUpperCase() : value),
   valor_diaria: yup.number().required('Valor da diária é obrigatório').positive('Valor deve ser positivo'),
 });
 
@@ -40,13 +45,18 @@ const Aluguel = () => {
     onSubmit: async (values) => {
       try {
         const token = localStorage.getItem('token');
-        await axios.post('http://localhost:8000/api/alugueis/carros', values, {
+        const dadosCarro = {
+          ...values,
+          placa: values.placa.toUpperCase(),
+        };
+        await axios.post('http://localhost:8000/api/alugueis/carros', dadosCarro, {
           headers: { Authorization: `Bearer ${token}` },
         });
         handleClose();
         fetchCarros();
       } catch (error) {
         console.error('Erro ao cadastrar carro:', error);
+        alert(error.response?.data?.detail || 'Erro ao cadastrar carro');
       }
     },
   });
@@ -124,6 +134,20 @@ const Aluguel = () => {
     }
   };
 
+  const handleExcluir = async (id) => {
+    if (window.confirm('Tem certeza que deseja excluir este carro?')) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:8000/api/alugueis/carros/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        fetchCarros();
+      } catch (error) {
+        console.error('Erro ao excluir carro:', error);
+      }
+    }
+  };
+
   return (
     <Container>
       <Box sx={{ mt: 4, mb: 4 }}>
@@ -153,6 +177,13 @@ const Aluguel = () => {
                 >
                   Alugar
                 </Button>
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => handleExcluir(carro.id)}
+                  color="error"
+                >
+                  <DeleteIcon />
+                </IconButton>
               </CardActions>
             </Card>
           </Grid>
